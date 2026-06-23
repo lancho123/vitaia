@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitaIA — Tu coach de bienestar con inteligencia artificial</title>
+<meta name="description" content="VitaIA usa IA para darte un plan de salud personalizado: sueño, nutrición, ejercicio y estrés. Gratis para siempre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a1a0f;
+  --paper:#f5f9f5;
+  --leaf:#1a3d22;
+  --sprout:#4ade80;
+  --mint:#d1fae5;
+  --fog:#6b8f74;
+  --line:rgba(26,61,34,0.12);
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 2rem;background:rgba(245,249,245,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-logo{font-family:var(--serif);font-size:1.4rem;color:var(--leaf);letter-spacing:-0.01em}
+.nav-logo em{font-style:italic;color:var(--sprout)}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-links a{font-size:0.85rem;color:var(--fog);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--leaf)}
+.nav-cta{background:var(--leaf);color:#fff;padding:0.55rem 1.25rem;border-radius:999px;font-size:0.85rem;font-weight:500;text-decoration:none;transition:opacity .2s}
+.nav-cta:hover{opacity:0.85;color:#fff}
+@media(max-width:600px){.nav-links{display:none}}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:7rem 1.5rem 5rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(74,222,128,0.08) 0%, transparent 70%);pointer-events:none}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:0.5rem;font-size:0.78rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--fog);border:1px solid var(--line);border-radius:999px;padding:0.4rem 1rem;margin-bottom:2rem}
+.hero-eyebrow span{width:6px;height:6px;background:var(--sprout);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+h1{font-family:var(--serif);font-size:clamp(2.8rem,7vw,5.2rem);font-weight:400;line-height:1.08;letter-spacing:-0.025em;color:var(--leaf);max-width:800px;margin-bottom:1.5rem}
+h1 em{font-style:italic;color:var(--sprout)}
+.hero-sub{font-size:clamp(1rem,2.2vw,1.2rem);color:var(--fog);max-width:520px;line-height:1.65;margin-bottom:2.5rem}
+.hero-actions{display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;margin-bottom:3.5rem}
+.btn-primary{background:var(--leaf);color:#fff;padding:0.9rem 2rem;border-radius:999px;font-size:1rem;font-weight:500;text-decoration:none;transition:all .2s;border:none;cursor:pointer}
+.btn-primary:hover{background:#0f2a16;transform:translateY(-1px)}
+.btn-ghost{border:1.5px solid var(--leaf);color:var(--leaf);padding:0.9rem 2rem;border-radius:999px;font-size:1rem;font-weight:500;text-decoration:none;transition:all .2s}
+.btn-ghost:hover{background:var(--mint)}
+.hero-proof{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;justify-content:center}
+.avatar-stack{display:flex}
+.avatar-stack img,.avatar{width:32px;height:32px;border-radius:50%;border:2px solid var(--paper);margin-left:-8px;background:var(--mint);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:600;color:var(--leaf);overflow:hidden}
+.avatar-stack .avatar:first-child{margin-left:0}
+.proof-text{font-size:0.82rem;color:var(--fog)}
+.proof-text strong{color:var(--ink)}
+.stars{color:var(--sprout);font-size:0.9rem}
+
+/* FLOATING PHONE MOCKUP */
+.phone-wrap{margin-top:4rem;position:relative;display:inline-block}
+.phone{width:min(300px,80vw);background:var(--leaf);border-radius:36px;padding:3px;box-shadow:0 40px 80px rgba(10,26,15,0.18),0 0 0 1px rgba(26,61,34,0.15)}
+.phone-inner{background:#0f1f15;border-radius:34px;overflow:hidden}
+.phone-screen{padding:1rem;font-size:0.75rem}
+.pscreen-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding:0 0.25rem}
+.pscreen-logo{color:#4ade80;font-weight:700;font-size:0.85rem}
+.pscreen-score{display:flex;align-items:center;gap:0.5rem}
+.score-circle{width:52px;height:52px;position:relative;margin:0 auto 0.6rem}
+.score-circle svg{transform:rotate(-90deg)}
+.score-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.score-num{color:#4ade80;font-size:1.1rem;font-weight:700;line-height:1}
+.score-lbl{color:#6b9e7e;font-size:0.48rem}
+.pscreen-metrics{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.75rem}
+.pm{background:#162a1c;border-radius:8px;padding:0.5rem;border:1px solid rgba(74,222,128,0.15)}
+.pm-val{color:#4ade80;font-size:0.8rem;font-weight:700}
+.pm-name{color:#6b9e7e;font-size:0.58rem;margin-top:1px}
+.phone-notch{width:80px;height:6px;background:rgba(74,222,128,0.15);border-radius:3px;margin:0 auto 0.5rem}
+.floating-tag{position:absolute;background:#fff;border-radius:12px;padding:0.5rem 0.8rem;box-shadow:0 8px 24px rgba(10,26,15,0.12);font-size:0.72rem;font-weight:500;color:var(--leaf);display:flex;align-items:center;gap:0.4rem;white-space:nowrap}
+.ft-1{top:20%;right:-2rem;animation:floatA 3s ease-in-out infinite}
+.ft-2{bottom:25%;left:-2rem;animation:floatB 3.5s ease-in-out infinite}
+.ft-dot{width:8px;height:8px;border-radius:50%;background:var(--sprout);flex-shrink:0}
+@keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes floatB{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* SECTIONS SHARED */
+section{padding:6rem 1.5rem}
+.section-inner{max-width:1080px;margin:0 auto}
+.section-label{font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--sprout);margin-bottom:1rem}
+.section-title{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;line-height:1.15;letter-spacing:-0.02em;color:var(--leaf);margin-bottom:1.25rem}
+.section-title em{font-style:italic}
+.section-body{font-size:1rem;color:var(--fog);line-height:1.7;max-width:520px}
+
+/* STATS TICKER */
+.stats-bar{background:var(--leaf);padding:1.25rem 0;overflow:hidden}
+.stats-track{display:flex;gap:4rem;white-space:nowrap;animation:scroll 20s linear infinite}
+.stats-track:hover{animation-play-state:paused}
+.stat-item{display:flex;align-items:center;gap:0.75rem;flex-shrink:0}
+.stat-num{font-family:var(--serif);font-size:1.5rem;font-style:italic;color:var(--sprout)}
+.stat-desc{font-size:0.82rem;color:rgba(255,255,255,0.7)}
+.stat-sep{color:rgba(255,255,255,0.2);font-size:1.2rem}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:3.5rem}
+.feat-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:2rem;transition:border-color .2s,transform .2s}
+.feat-card:hover{border-color:rgba(74,222,128,0.4);transform:translateY(-2px)}
+.feat-icon{width:44px;height:44px;background:var(--mint);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:1.25rem}
+.feat-card h3{font-size:1.05rem;font-weight:600;color:var(--leaf);margin-bottom:0.5rem}
+.feat-card p{font-size:0.88rem;color:var(--fog);line-height:1.6}
+
+/* HOW IT WORKS */
+.how-wrap{background:var(--leaf);border-radius:28px;padding:3.5rem;margin-top:3.5rem;position:relative;overflow:hidden}
+.how-wrap::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:rgba(74,222,128,0.06);border-radius:50%}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;position:relative;z-index:1}
+.step{text-align:center}
+.step-num{font-family:var(--serif);font-size:3.5rem;font-style:italic;color:rgba(74,222,128,0.25);line-height:1;margin-bottom:0.75rem}
+.step h4{font-size:0.95rem;font-weight:600;color:#fff;margin-bottom:0.4rem}
+.step p{font-size:0.82rem;color:rgba(255,255,255,0.6);line-height:1.55}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem}
+.testi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:1.75rem}
+.testi-stars{color:var(--sprout);font-size:0.85rem;margin-bottom:0.75rem}
+.testi-text{font-size:0.9rem;color:var(--ink);line-height:1.65;margin-bottom:1.25rem}
+.testi-author{display:flex;align-items:center;gap:0.75rem}
+.testi-avatar{width:38px;height:38px;border-radius:50%;background:var(--mint);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--leaf);flex-shrink:0}
+.testi-name{font-size:0.85rem;font-weight:600;color:var(--leaf)}
+.testi-role{font-size:0.75rem;color:var(--fog)}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-top:3rem;max-width:700px;margin-left:auto;margin-right:auto}
+.plan{background:#fff;border:1px solid var(--line);border-radius:22px;padding:2rem}
+.plan.featured{border:2px solid var(--sprout);position:relative}
+.plan-badge-top{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--sprout);color:var(--leaf);font-size:0.72rem;font-weight:700;padding:0.25rem 1rem;border-radius:999px;white-space:nowrap}
+.plan-name{font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--fog);margin-bottom:0.75rem}
+.plan-price{font-family:var(--serif);font-size:3rem;font-style:italic;color:var(--leaf);line-height:1}
+.plan-price sup{font-family:var(--sans);font-size:1rem;font-style:normal;vertical-align:super}
+.plan-price span{font-family:var(--sans);font-size:0.85rem;font-style:normal;color:var(--fog)}
+.plan-desc{font-size:0.82rem;color:var(--fog);margin:0.75rem 0 1.5rem;line-height:1.5}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.75rem}
+.plan-features li{font-size:0.85rem;color:var(--ink);display:flex;align-items:flex-start;gap:0.6rem}
+.plan-features li::before{content:'✓';color:var(--sprout);font-weight:700;flex-shrink:0}
+.plan-features li.off{color:var(--fog)}
+.plan-features li.off::before{content:'–';color:var(--line)}
+.plan-btn{display:block;text-align:center;padding:0.85rem;border-radius:999px;font-size:0.9rem;font-weight:500;text-decoration:none;transition:all .2s}
+.plan-btn-outline{border:1.5px solid var(--leaf);color:var(--leaf)}
+.plan-btn-outline:hover{background:var(--mint)}
+.plan-btn-fill{background:var(--leaf);color:#fff}
+.plan-btn-fill:hover{background:#0f2a16}
+
+/* FAQ */
+.faq-list{max-width:680px;margin:2.5rem auto 0;display:flex;flex-direction:column;gap:0}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-q{width:100%;background:none;border:none;display:flex;justify-content:space-between;align-items:center;padding:1.25rem 0;font-size:0.95rem;font-weight:500;color:var(--leaf);cursor:pointer;text-align:left;gap:1rem}
+.faq-q:hover{color:var(--sprout)}
+.faq-icon{font-size:1.2rem;color:var(--fog);flex-shrink:0;transition:transform .3s}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .3s}
+.faq-a p{font-size:0.88rem;color:var(--fog);line-height:1.7;padding-bottom:1.25rem}
+.faq-item.open .faq-icon{transform:rotate(45deg);color:var(--sprout)}
+.faq-item.open .faq-a{max-height:200px}
+
+/* CTA FINAL */
+.cta-section{background:var(--leaf);text-align:center;padding:7rem 1.5rem;position:relative;overflow:hidden}
+.cta-section::before,.cta-section::after{content:'';position:absolute;border-radius:50%;background:rgba(74,222,128,0.06)}
+.cta-section::before{width:600px;height:600px;top:-200px;left:-150px}
+.cta-section::after{width:400px;height:400px;bottom:-100px;right:-100px}
+.cta-section h2{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:400;font-style:italic;color:#fff;margin-bottom:1rem;position:relative;z-index:1}
+.cta-section p{font-size:1rem;color:rgba(255,255,255,0.65);margin-bottom:2.5rem;position:relative;z-index:1}
+.cta-section .btn-primary{background:var(--sprout);color:var(--leaf);position:relative;z-index:1;font-weight:600}
+.cta-section .btn-primary:hover{background:#86efac}
+.cta-fine{display:block;font-size:0.76rem;color:rgba(255,255,255,0.4);margin-top:1rem;position:relative;z-index:1}
+
+/* FOOTER */
+footer{background:var(--ink);color:rgba(255,255,255,0.5);padding:3rem 1.5rem;text-align:center}
+.footer-logo{font-family:var(--serif);font-size:1.5rem;font-style:italic;color:var(--sprout);margin-bottom:0.75rem}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:1.5rem;margin-bottom:1.5rem}
+.footer-links a{font-size:0.8rem;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:rgba(255,255,255,0.8)}
+.footer-copy{font-size:0.75rem}
+
+/* EMAIL FORM */
+.email-form{display:flex;flex-wrap:wrap;gap:0.6rem;justify-content:center;max-width:440px;margin:0 auto 1rem}
+.email-form input{flex:1;min-width:200px;padding:0.85rem 1.25rem;border-radius:999px;border:none;background:rgba(255,255,255,0.12);color:#fff;font-size:0.9rem;font-family:var(--sans);outline:none;transition:background .2s}
+.email-form input::placeholder{color:rgba(255,255,255,0.4)}
+.email-form input:focus{background:rgba(255,255,255,0.18)}
+.form-success{display:none;font-size:0.85rem;color:var(--sprout);margin-top:0.5rem}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  section{padding:4rem 1.25rem}
+  .how-wrap{padding:2rem 1.5rem}
+  .ft-1,.ft-2{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Vita<em>IA</em></div>
+  <div class="nav-links">
+    <a href="#features">Qué hace</a>
+    <a href="#how">Cómo funciona</a>
+    <a href="#pricing">Planes</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a href="#cta" class="nav-cta">Empezar gratis</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow"><span></span>Coach de bienestar con IA — nuevo en 2026</div>
+  <h1>Tu mejor versión,<br><em>guiada por inteligencia</em><br>artificial</h1>
+  <p class="hero-sub">VitaIA analiza tu sueño, nutrición, ejercicio y estrés para darte un plan diario personalizado. Sin suposiciones genéricas.</p>
+  <div class="hero-actions">
+    <a href="#cta" class="btn-primary">Empieza gratis ahora →</a>
+    <a href="#how" class="btn-ghost">Ver cómo funciona</a>
+  </div>
+  <div class="hero-proof">
+    <div class="avatar-stack">
+      <div class="avatar" style="background:#d1fae5;color:#166534">MR</div>
+      <div class="avatar" style="background:#dcfce7;color:#14532d">JP</div>
+      <div class="avatar" style="background:#bbf7d0;color:#15803d">AL</div>
+      <div class="avatar" style="background:#a7f3d0;color:#065f46">CS</div>
+    </div>
+    <div class="proof-text"><div class="stars">★★★★★</div><strong>+1,200 personas</strong> ya mejoraron su bienestar</div>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="floating-tag ft-1"><div class="ft-dot"></div>Racha de 12 días 🔥</div>
+    <div class="floating-tag ft-2"><div class="ft-dot"></div>Sueño mejoró +40 min</div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="pscreen-bar">
+            <div class="pscreen-logo">VitaIA</div>
+            <div style="font-size:0.6rem;color:#4ade80;background:rgba(74,222,128,0.1);padding:2px 8px;border-radius:999px">🔥 12 días</div>
+          </div>
+          <div style="text-align:center;margin-bottom:0.75rem">
+            <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:#6b9e7e;margin-bottom:0.6rem">Bienestar hoy</div>
+            <div class="score-circle">
+              <svg width="52" height="52" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="22" fill="none" stroke="#1e3826" stroke-width="5"/>
+                <circle cx="26" cy="26" r="22" fill="none" stroke="#4ade80" stroke-width="5"
+                  stroke-dasharray="138.2" stroke-dashoffset="34.6" stroke-linecap="round"/>
+              </svg>
+              <div class="score-inner"><div class="score-num">75</div><div class="score-lbl">/100</div></div>
+            </div>
+          </div>
+          <div class="pscreen-metrics">
+            <div class="pm"><div class="pm-val">1.8L</div><div class="pm-name">💧 Agua</div></div>
+            <div class="pm"><div class="pm-val">7.5h</div><div class="pm-name">😴 Sueño</div></div>
+            <div class="pm"><div class="pm-val">35min</div><div class="pm-name">🏃 Ejercicio</div></div>
+            <div class="pm"><div class="pm-val">Bien</div><div class="pm-name">😊 Ánimo</div></div>
+          </div>
+          <div style="margin-top:0.75rem;background:#1e3826;border-radius:8px;padding:0.6rem;border:1px solid rgba(74,222,128,0.15)">
+            <div style="font-size:0.6rem;color:#6b9e7e;margin-bottom:0.3rem">🤖 Coach dice:</div>
+            <div style="font-size:0.62rem;color:#f0fdf4;line-height:1.4">Bebe un vaso de agua ahora. Te faltan 200ml para tu meta de hoy.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS TICKER -->
+<div class="stats-bar">
+  <div class="stats-track">
+    <div class="stat-item"><span class="stat-num">+40min</span><span class="stat-desc">más de sueño promedio</span></div>
+    <div class="stat-sep">·</div>
+    <div class="stat-item"><span class="stat-num">78%</span><span class="stat-desc">mejoran energía en 2 semanas</span></div>
+    <div class="stat-sep">·</div>
+    <div class="stat-item"><span class="stat-num">1,200+</span><span class="stat-desc">personas activas</span></div>
+    <div class="stat-sep">·</div>
+    <div class="stat-item"><span class="stat-num">4.9★</span><span class="stat-desc">valoración promedio</span></div>
+    <div class="stat-sep">·</div>
+    <div class="stat-item"><span class="stat-num">Gratis</span><span class="stat-desc">para empezar hoy</span></div>
+    <div class="stat-sep">·</div>
+    <!-- duplicado para loop infinito -->
+    <div class="stat-item"><span class="stat-num">+40min</span><span class="stat-desc">más de sueño promedio</span></div>
+    <div class="stat-sep">·</div>
+    <div class="stat-item"><span class="stat-num">78%</span><span class="stat-desc">mejoran energía en 2 semanas</span></div>
+    <div class="stat-sep">·</div>
+    <div class="stat-item"><span class="stat-num">1,200+</span><span class="stat-desc">personas activas</span></div>
+    <div class="stat-sep">·</div>
+    <div class="stat-item"><span class="stat-num">4.9★</span><span class="stat-desc">valoración promedio</span></div>
+    <div class="stat-sep">·</div>
+    <div class="stat-item"><span class="stat-num">Gratis</span><span class="stat-desc">para empezar hoy</span></div>
+    <div class="stat-sep">·</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div style="max-width:600px">
+      <div class="section-label">Qué hace VitaIA</div>
+      <h2 class="section-title">Un coach que te conoce<br><em>de verdad</em></h2>
+      <p class="section-body">La mayoría de apps te dan consejos genéricos. VitaIA aprende de tus hábitos diarios y adapta cada recomendación a tu cuerpo, horario y objetivos.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🤖</div>
+        <h3>Coach con IA disponible 24/7</h3>
+        <p>Pregúntale cualquier cosa sobre nutrición, ejercicio o estrés. Te responde como un profesional, no como un chatbot genérico.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <h3>Puntuación de bienestar diaria</h3>
+        <p>Un número claro del 0 al 100 que resume cómo vas con sueño, hidratación, movimiento y estado de ánimo. Sin gráficas confusas.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">✅</div>
+        <h3>Rastreador de hábitos visual</h3>
+        <p>Marca tus hábitos cada día y mantén tu racha activa. La constancia es el único secreto real del bienestar a largo plazo.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📅</div>
+        <h3>Plan personalizado con IA</h3>
+        <p>Genera tu rutina diaria ideal basada en tu historial. Horarios, comidas, ejercicio y descanso optimizados para ti.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📝</div>
+        <h3>Registro rápido en segundos</h3>
+        <p>Anota sueño, agua, ejercicio y estado de ánimo en menos de 30 segundos. Diseñado para que nunca sea una carga.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔒</div>
+        <h3>Tus datos, solo tuyos</h3>
+        <p>No vendemos ni compartimos tu información. Todo se guarda localmente en tu dispositivo, sin cuentas ni contraseñas obligatorias.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="padding-top:0">
+  <div class="section-inner">
+    <div class="section-label">Cómo funciona</div>
+    <h2 class="section-title">De cero a tu mejor versión<br><em>en tres pasos</em></h2>
+    <div class="how-wrap">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>Registra tu día</h4>
+          <p>Anota cómo dormiste, cuánta agua tomaste, tu ejercicio y estado de ánimo. 30 segundos al día.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>La IA analiza tus patrones</h4>
+          <p>VitaIA detecta qué hábitos te afectan más y dónde tienes más potencial de mejora.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>Recibe tu plan del día</h4>
+          <p>Cada mañana tienes una rutina personalizada con horarios, comidas y micro-hábitos accionables.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section style="background:#fff;padding:5rem 1.5rem">
+  <div class="section-inner">
+    <div class="section-label">Testimonios reales</div>
+    <h2 class="section-title">Lo que dicen quienes<br><em>ya lo usan</em></h2>
+    <div class="testi-grid">
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Llevaba años intentando mejorar mi sueño con apps genéricas. VitaIA me identificó que el problema era mi horario de cena. En dos semanas dormía 45 minutos más."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">MR</div>
+          <div><div class="testi-name">María R.</div><div class="testi-role">Docente, Lima</div></div>
+        </div>
+      </div>
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"El coach de IA es lo mejor. Le pregunté qué comer antes de entrenar y me dio una respuesta personalizada para mi tipo de ejercicio. Nada de respuestas de Google."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#dcfce7;color:#14532d">JP</div>
+          <div><div class="testi-name">José P.</div><div class="testi-role">Emprendedor, Arequipa</div></div>
+        </div>
+      </div>
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Me enganchó la racha. Llevo 28 días seguidos cumpliendo mis hábitos. Nunca había sido constante con nada de salud. La gamificación simple funciona."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#bbf7d0;color:#15803d">AL</div>
+          <div><div class="testi-name">Ana L.</div><div class="testi-role">Diseñadora, Cusco</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner" style="text-align:center">
+    <div class="section-label">Planes</div>
+    <h2 class="section-title">Empieza gratis,<br><em>escala cuando quieras</em></h2>
+    <p class="section-body" style="margin:0 auto 0">Sin tarjeta de crédito. Sin compromisos. Cancela cuando quieras.</p>
+    <div class="pricing-grid">
+      <div class="plan">
+        <div class="plan-name">Gratis</div>
+        <div class="plan-price">S/ <span style="font-family:var(--serif);font-size:3rem;font-style:italic">0</span></div>
+        <p class="plan-desc">Todo lo que necesitas para empezar a construir buenos hábitos.</p>
+        <ul class="plan-features">
+          <li>Registro diario completo</li>
+          <li>Puntuación de bienestar</li>
+          <li>Tracker de 5 hábitos</li>
+          <li>5 preguntas al coach IA por día</li>
+          <li class="off">Plan personalizado con IA</li>
+          <li class="off">Historial ilimitado</li>
+          <li class="off">Sin anuncios</li>
+        </ul>
+        <a href="#cta" class="plan-btn plan-btn-outline">Empezar gratis</a>
+      </div>
+      <div class="plan featured">
+        <div class="plan-badge-top">Más popular</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-price"><sup>S/</sup>19<span>/mes</span></div>
+        <p class="plan-desc">Para quienes van en serio con su bienestar.</p>
+        <ul class="plan-features">
+          <li>Todo del plan gratis</li>
+          <li>Coach IA ilimitado</li>
+          <li>Plan diario personalizado</li>
+          <li>Hábitos ilimitados</li>
+          <li>Historial de 12 meses</li>
+          <li>Sin anuncios</li>
+          <li>Soporte prioritario</li>
+        </ul>
+        <a href="#cta" class="plan-btn plan-btn-fill">Probar 7 días gratis</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section style="padding-top:0" id="faq">
+  <div class="section-inner" style="text-align:center">
+    <div class="section-label">Preguntas frecuentes</div>
+    <h2 class="section-title">Todo lo que quieres<br><em>saber antes de empezar</em></h2>
+    <div class="faq-list" style="text-align:left">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">¿Necesito conocimientos técnicos para usarla? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>No. VitaIA funciona directamente en tu navegador, sin instalar nada. Si sabes usar WhatsApp, sabes usar VitaIA. Diseñada para ser tan simple como sea posible.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">¿Cómo funciona el coach de inteligencia artificial? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>El coach usa la misma tecnología de IA que impulsa los mejores asistentes del mundo. Está entrenado en nutrición, ejercicio, sueño y manejo del estrés. Puedes hacerle cualquier pregunta de bienestar y te responde en segundos, en español, con consejos prácticos para tu situación específica.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">¿Mis datos de salud están seguros? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Sí. Tu información se guarda localmente en tu dispositivo. No la vendemos, no la compartimos, y no la usamos para publicidad. Tu privacidad es un principio de diseño, no un accesorio.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">¿Funciona en mi celular? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Sí, VitaIA está optimizada para móvil. Abre el enlace desde tu celular, y puedes añadirla a la pantalla de inicio como si fuera una app nativa. Compatible con Android e iPhone.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar el plan premium cuando quiera? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Sí, sin preguntas ni trámites. Cancelas con un clic y mantienes el acceso hasta el final del período pagado. No hay contratos ni penalizaciones.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section" id="cta">
+  <h2>Empieza hoy.<br>Tu cuerpo te lo agradecerá.</h2>
+  <p>Únete a más de 1,200 personas que ya cuidan su bienestar con VitaIA.</p>
+  <div class="email-form" id="emailForm">
+    <input type="email" id="emailInput" placeholder="tu@correo.com" />
+    <button class="btn-primary" onclick="handleSignup()">Empezar gratis →</button>
+  </div>
+  <p class="form-success" id="formSuccess">✅ ¡Listo! Te enviamos el acceso ahora mismo.</p>
+  <span class="cta-fine">Sin tarjeta de crédito · Cancela cuando quieras · En español</span>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">VitaIA</div>
+  <div class="footer-links">
+    <a href="#">Inicio</a>
+    <a href="#features">Características</a>
+    <a href="#pricing">Precios</a>
+    <a href="#faq">FAQ</a>
+    <a href="#">Privacidad</a>
+    <a href="#">Contacto</a>
+  </div>
+  <p class="footer-copy">© 2026 VitaIA. Hecho con cuidado para Latinoamérica.</p>
+</footer>
+
+<script>
+function toggleFaq(btn){
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
+function handleSignup(){
+  const email = document.getElementById('emailInput').value.trim();
+  if(!email || !email.includes('@')) {
+    document.getElementById('emailInput').style.borderColor = 'rgba(248,113,113,0.6)';
+    return;
+  }
+  document.getElementById('emailForm').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+}
+
+// Smooth active nav on scroll
+const sections = document.querySelectorAll('section[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 100;
+  sections.forEach(s => {
+    const link = document.querySelector(`nav a[href="#${s.id}"]`);
+    if(!link) return;
+    if(s.offsetTop <= y && s.offsetTop + s.offsetHeight > y){
+      document.querySelectorAll('.nav-links a').forEach(a => a.style.color = '');
+      link.style.color = 'var(--leaf)';
+    }
+  });
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+},{threshold:0.1});
+document.querySelectorAll('.feat-card,.testi,.plan,.step').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>

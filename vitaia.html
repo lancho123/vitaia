@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f1f15">
+<title>VitaIA — Tu coach de bienestar</title>
+<style>
+  :root {
+    --bg: #0f1f15;
+    --bg2: #162a1c;
+    --bg3: #1e3826;
+    --accent: #4ade80;
+    --accent2: #86efac;
+    --accent-dim: rgba(74,222,128,0.12);
+    --text: #f0fdf4;
+    --muted: #6b9e7e;
+    --border: rgba(74,222,128,0.18);
+    --card: #162a1c;
+    --danger: #f87171;
+    --warn: #fbbf24;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Pro Text', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+  .logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+  }
+  .logo span { color: var(--text); font-weight: 300; }
+  .streak-pill {
+    background: var(--accent-dim);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.3rem 0.85rem;
+    font-size: 0.8rem;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1;
+    min-width: 80px;
+    padding: 0.9rem 0.5rem;
+    font-size: 0.78rem;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab:hover { color: var(--accent2); }
+
+  /* SCREENS */
+  .screen { display: none; padding: 1.25rem 1.5rem; max-width: 600px; margin: 0 auto; }
+  .screen.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .card-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  /* WELLNESS SCORE */
+  .score-ring {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .ring-wrap {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+  }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .ring-score { font-size: 1.6rem; font-weight: 700; color: var(--accent); line-height: 1; }
+  .ring-label { font-size: 0.6rem; color: var(--muted); }
+  .score-details { flex: 1; }
+  .score-details h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .score-details p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* METRICS GRID */
+  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+  .metric {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .metric-icon { font-size: 1.3rem; }
+  .metric-val { font-size: 1.4rem; font-weight: 700; color: var(--accent); line-height: 1; }
+  .metric-name { font-size: 0.72rem; color: var(--muted); }
+  .metric-bar { height: 3px; background: var(--bg); border-radius: 2px; margin-top: 4px; }
+  .metric-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 1s ease; }
+
+  /* HABIT TRACKER */
+  .habit-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .habit-item:last-child { border-bottom: none; }
+  .habit-left { display: flex; align-items: center; gap: 0.75rem; }
+  .habit-icon { font-size: 1.2rem; width: 36px; height: 36px; background: var(--bg3); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .habit-info h4 { font-size: 0.88rem; font-weight: 500; }
+  .habit-info p { font-size: 0.73rem; color: var(--muted); margin-top: 1px; }
+  .habit-dots { display: flex; gap: 4px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; }
+  .dot.done { background: var(--accent); border-color: var(--accent); }
+  .add-habit-btn {
+    width: 100%;
+    padding: 0.7rem;
+    background: var(--accent-dim);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    color: var(--accent);
+    font-size: 0.82rem;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 0.75rem;
+    transition: all 0.2s;
+  }
+  .add-habit-btn:hover { background: rgba(74,222,128,0.2); }
+
+  /* AI COACH */
+  .chat-area {
+    height: 340px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .msg {
+    max-width: 85%;
+    padding: 0.75rem 1rem;
+    border-radius: 14px;
+    font-size: 0.86rem;
+    line-height: 1.55;
+  }
+  .msg.ai {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .msg.user {
+    background: var(--accent);
+    color: #0a1f10;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    font-weight: 500;
+  }
+  .msg.thinking { opacity: 0.6; font-style: italic; }
+  .chat-input-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-end;
+  }
+  textarea#chatInput {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 0.88rem;
+    padding: 0.75rem 1rem;
+    resize: none;
+    min-height: 48px;
+    max-height: 120px;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+  textarea#chatInput:focus { outline: none; border-color: var(--accent); }
+  textarea#chatInput::placeholder { color: var(--muted); }
+  .send-btn {
+    width: 46px;
+    height: 46px;
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    color: #0a1f10;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: opacity 0.2s;
+  }
+  .send-btn:hover { opacity: 0.85; }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .quick-prompts {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+  .qp {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .qp:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* LOG SCREEN */
+  .log-form label { font-size: 0.78rem; color: var(--muted); display: block; margin-bottom: 0.4rem; }
+  .log-form .field { margin-bottom: 1rem; }
+  .log-form input, .log-form select, .log-form textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 0.88rem;
+    padding: 0.65rem 0.9rem;
+    font-family: inherit;
+  }
+  .log-form input:focus, .log-form select:focus, .log-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .log-form select option { background: #162a1c; }
+  .mood-row { display: flex; gap: 0.5rem; }
+  .mood-btn {
+    flex: 1;
+    padding: 0.65rem 0;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .mood-btn.selected { border-color: var(--accent); background: var(--accent-dim); }
+  .submit-log {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    color: #0a1f10;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 0.5rem;
+  }
+  .submit-log:hover { opacity: 0.88; }
+
+  /* PLAN SCREEN */
+  .plan-grid { display: grid; gap: 0.75rem; }
+  .plan-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.1rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .plan-time {
+    font-size: 0.72rem;
+    color: var(--accent);
+    font-weight: 600;
+    min-width: 48px;
+    padding-top: 2px;
+  }
+  .plan-content h4 { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.25rem; }
+  .plan-content p { font-size: 0.78rem; color: var(--muted); line-height: 1.45; }
+  .plan-badge {
+    margin-top: 0.4rem;
+    display: inline-block;
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .gen-plan-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--accent-dim);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1rem;
+  }
+  .gen-plan-btn:hover { background: rgba(74,222,128,0.2); }
+  .gen-plan-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* API KEY BANNER */
+  .api-banner {
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.82rem;
+    color: var(--warn);
+    line-height: 1.5;
+  }
+  .api-banner strong { display: block; margin-bottom: 0.3rem; }
+  .api-input-row { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
+  .api-input-row input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.82rem;
+    padding: 0.5rem 0.75rem;
+  }
+  .api-input-row input:focus { outline: none; }
+  .api-save-btn {
+    padding: 0.5rem 1rem;
+    background: var(--warn);
+    border: none;
+    border-radius: 8px;
+    color: #1a0a00;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #0a1f10;
+    padding: 0.65rem 1.25rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Vita<span>IA</span></div>
+  <div class="streak-pill">🔥 <span id="streakCount">5</span> días</div>
+</header>
+
+<nav>
+  <div class="tab active" onclick="showTab('home')">🏠 Inicio</div>
+  <div class="tab" onclick="showTab('coach')">🤖 Coach IA</div>
+  <div class="tab" onclick="showTab('log')">📝 Registro</div>
+  <div class="tab" onclick="showTab('habits')">✅ Hábitos</div>
+  <div class="tab" onclick="showTab('plan')">📅 Mi Plan</div>
+</nav>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="card" style="margin-top:1rem">
+    <div class="card-title">Puntuación de bienestar hoy</div>
+    <div class="score-ring">
+      <div class="ring-wrap">
+        <svg width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" fill="none" stroke="#1e3826" stroke-width="8"/>
+          <circle id="scoreCircle" cx="45" cy="45" r="38" fill="none" stroke="#4ade80" stroke-width="8"
+            stroke-dasharray="238.76" stroke-dashoffset="71.6" stroke-linecap="round"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-score" id="scoreNum">70</div>
+          <div class="ring-label">/ 100</div>
+        </div>
+      </div>
+      <div class="score-details">
+        <h2>¡Buen progreso! 💪</h2>
+        <p>Has cumplido 3 de 5 hábitos hoy. Hidratación y sueño son tus áreas a mejorar.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-icon">💧</div>
+      <div class="metric-val" id="waterVal">1.2L</div>
+      <div class="metric-name">Agua hoy</div>
+      <div class="metric-bar"><div class="metric-fill" id="waterBar" style="width:40%"></div></div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon">😴</div>
+      <div class="metric-val">6.5h</div>
+      <div class="metric-name">Sueño anoche</div>
+      <div class="metric-bar"><div class="metric-fill" style="width:65%;background:#86efac"></div></div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon">🏃</div>
+      <div class="metric-val">32 min</div>
+      <div class="metric-name">Ejercicio</div>
+      <div class="metric-bar"><div class="metric-fill" style="width:53%;background:#4ade80"></div></div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon">😊</div>
+      <div class="metric-val">Bien</div>
+      <div class="metric-name">Estado de ánimo</div>
+      <div class="metric-bar"><div class="metric-fill" style="width:75%;background:#86efac"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Consejo del día</div>
+    <p style="font-size:0.88rem;line-height:1.6;color:var(--text)">
+      🌿 <strong>Respira en 4-7-8:</strong> Inhala 4 segundos, mantén 7, exhala 8. Hazlo 3 veces ahora mismo. Reduce el cortisol y mejora el sueño esta noche.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Agua rápida</div>
+    <p style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem">Toca para agregar un vaso (250ml)</p>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+      <button onclick="addWater()" style="flex:1;min-width:120px;padding:0.75rem;background:var(--accent-dim);border:1px solid var(--border);border-radius:10px;color:var(--accent);font-size:0.88rem;cursor:pointer">
+        + Vaso de agua 💧
+      </button>
+      <button onclick="showTab('log')" style="flex:1;min-width:120px;padding:0.75rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.88rem;cursor:pointer">
+        Registrar día 📝
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- COACH IA -->
+<div id="screen-coach" class="screen">
+  <div style="margin-top:1rem">
+    <div id="apiBanner" class="api-banner" style="display:none">
+      <strong>🔑 Conecta tu API key de Anthropic</strong>
+      Para activar el coach IA real, ingresa tu API key (gratis en console.anthropic.com).
+      <div class="api-input-row">
+        <input type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+        <button class="api-save-btn" onclick="saveApiKey()">Guardar</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:0.75rem">
+      <div class="card-title">Coach VitaIA 🌿</div>
+      <div class="chat-area" id="chatArea">
+        <div class="msg ai">¡Hola! Soy tu coach de bienestar personal. Puedo ayudarte con nutrición, ejercicio, sueño y manejo del estrés. ¿Por dónde empezamos hoy? 🌱</div>
+      </div>
+      <div class="quick-prompts">
+        <div class="qp" onclick="quickSend('¿Qué debo comer para tener más energía?')">🥗 Nutrición</div>
+        <div class="qp" onclick="quickSend('Dame una rutina de 15 minutos para hacer en casa')">💪 Ejercicio</div>
+        <div class="qp" onclick="quickSend('¿Cómo puedo mejorar mi sueño?')">😴 Sueño</div>
+        <div class="qp" onclick="quickSend('Me siento estresado, ¿qué hago?')">🧘 Estrés</div>
+      </div>
+      <div class="chat-input-row">
+        <textarea id="chatInput" placeholder="Pregúntale a tu coach..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMsg()">↑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOG -->
+<div id="screen-log" class="screen">
+  <div style="margin-top:1rem" class="log-form">
+    <div class="card">
+      <div class="card-title">Registro diario</div>
+
+      <div class="field">
+        <label>Estado de ánimo</label>
+        <div class="mood-row" id="moodRow">
+          <button class="mood-btn" onclick="setMood(this,'😢')">😢</button>
+          <button class="mood-btn" onclick="setMood(this,'😕')">😕</button>
+          <button class="mood-btn selected" onclick="setMood(this,'😐')">😐</button>
+          <button class="mood-btn" onclick="setMood(this,'🙂')">🙂</button>
+          <button class="mood-btn" onclick="setMood(this,'😄')">😄</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Horas de sueño</label>
+        <input type="number" id="sleepInput" min="0" max="12" step="0.5" placeholder="Ej: 7.5" />
+      </div>
+
+      <div class="field">
+        <label>Vasos de agua (250ml c/u)</label>
+        <input type="number" id="waterInput" min="0" max="20" placeholder="Ej: 8" value="5" />
+      </div>
+
+      <div class="field">
+        <label>Minutos de ejercicio</label>
+        <input type="number" id="exerciseInput" min="0" max="300" placeholder="Ej: 30" />
+      </div>
+
+      <div class="field">
+        <label>¿Cómo fue tu alimentación?</label>
+        <select id="nutritionInput">
+          <option value="">Seleccionar...</option>
+          <option value="muy_bien">🥦 Muy bien — saludable</option>
+          <option value="bien">✅ Bien — bastante equilibrado</option>
+          <option value="regular">⚡ Regular — con algunos excesos</option>
+          <option value="mal">🍕 Mal — comida poco saludable</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Nota libre (opcional)</label>
+        <textarea id="noteInput" rows="2" placeholder="¿Algo que quieras recordar de hoy?" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.88rem;padding:0.65rem;font-family:inherit;width:100%;resize:none"></textarea>
+      </div>
+
+      <button class="submit-log" onclick="saveLog()">Guardar registro del día ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- HABITS -->
+<div id="screen-habits" class="screen">
+  <div style="margin-top:1rem">
+    <div class="card">
+      <div class="card-title">Hábitos de esta semana</div>
+      <div id="habitList">
+        <div class="habit-item">
+          <div class="habit-left">
+            <div class="habit-icon">💧</div>
+            <div class="habit-info">
+              <h4>2L de agua al día</h4>
+              <p>5/7 días esta semana</p>
+            </div>
+          </div>
+          <div class="habit-dots" id="dots-agua">
+          </div>
+        </div>
+        <div class="habit-item">
+          <div class="habit-left">
+            <div class="habit-icon">🏃</div>
+            <div class="habit-info">
+              <h4>30 min de ejercicio</h4>
+              <p>3/7 días esta semana</p>
+            </div>
+          </div>
+          <div class="habit-dots" id="dots-ejercicio"></div>
+        </div>
+        <div class="habit-item">
+          <div class="habit-left">
+            <div class="habit-icon">🧘</div>
+            <div class="habit-info">
+              <h4>10 min meditación</h4>
+              <p>4/7 días esta semana</p>
+            </div>
+          </div>
+          <div class="habit-dots" id="dots-meditacion"></div>
+        </div>
+        <div class="habit-item">
+          <div class="habit-left">
+            <div class="habit-icon">😴</div>
+            <div class="habit-info">
+              <h4>Dormir 8 horas</h4>
+              <p>2/7 días esta semana</p>
+            </div>
+          </div>
+          <div class="habit-dots" id="dots-sueno"></div>
+        </div>
+      </div>
+      <button class="add-habit-btn" onclick="addHabit()">+ Agregar nuevo hábito</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Tu racha actual 🔥</div>
+      <div style="display:flex;align-items:center;gap:1rem">
+        <div style="font-size:3rem;line-height:1">🔥</div>
+        <div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--accent)" id="streakBig">5</div>
+          <div style="font-size:0.82rem;color:var(--muted)">días consecutivos cumpliendo tus hábitos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PLAN -->
+<div id="screen-plan" class="screen">
+  <div style="margin-top:1rem">
+    <button class="gen-plan-btn" id="genPlanBtn" onclick="generatePlan()">
+      ✨ Generar mi plan personalizado con IA
+    </button>
+
+    <div class="card">
+      <div class="card-title">Plan de hoy — <span style="color:var(--accent)" id="planDate"></span></div>
+      <div class="plan-grid" id="planGrid">
+        <div class="plan-item">
+          <div class="plan-time">06:30</div>
+          <div class="plan-content">
+            <h4>Despertar activo</h4>
+            <p>5 min de estiramiento suave al levantarte. Hidratación inmediata con un vaso de agua.</p>
+            <span class="plan-badge">🌅 Mañana</span>
+          </div>
+        </div>
+        <div class="plan-item">
+          <div class="plan-time">07:00</div>
+          <div class="plan-content">
+            <h4>Desayuno nutritivo</h4>
+            <p>Avena con frutas o huevos con vegetales. Evita ultraprocesados en la primera comida.</p>
+            <span class="plan-badge">🥗 Nutrición</span>
+          </div>
+        </div>
+        <div class="plan-item">
+          <div class="plan-time">12:00</div>
+          <div class="plan-content">
+            <h4>Caminata activa</h4>
+            <p>20–30 min de caminata al mediodía. Aprovecha la luz solar para regular tu ritmo circadiano.</p>
+            <span class="plan-badge">🏃 Movimiento</span>
+          </div>
+        </div>
+        <div class="plan-item">
+          <div class="plan-time">22:00</div>
+          <div class="plan-content">
+            <h4>Rutina de sueño</h4>
+            <p>Sin pantallas 30 min antes. Lectura o respiración 4-7-8 para bajar el cortisol.</p>
+            <span class="plan-badge">😴 Descanso</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const DAYS = ['L','M','X','J','V','S','D'];
+const habitData = {
+  agua:      [1,1,1,1,1,0,0],
+  ejercicio: [1,1,0,1,0,0,0],
+  meditacion:[1,1,1,1,0,0,0],
+  sueno:     [1,1,0,0,0,0,0]
+};
+
+function buildDots(){
+  ['agua','ejercicio','meditacion','sueno'].forEach(id => {
+    const el = document.getElementById('dots-'+id);
+    if(!el) return;
+    el.innerHTML = '';
+    habitData[id].forEach((done,i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (done?' done':'');
+      d.title = DAYS[i];
+      d.onclick = () => { habitData[id][i] = done?0:1; buildDots(); };
+      el.appendChild(d);
+    });
+  });
+}
+buildDots();
+
+let waterCount = 5;
+function addWater(){
+  waterCount++;
+  const liters = (waterCount * 0.25).toFixed(1) + 'L';
+  document.getElementById('waterVal').textContent = liters;
+  const pct = Math.min(waterCount/8*100, 100);
+  document.getElementById('waterBar').style.width = pct + '%';
+  document.getElementById('waterInput').value = waterCount;
+  showToast('💧 ¡Vaso registrado! ' + liters + ' hoy');
+}
+
+function setMood(btn, emoji){
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function saveLog(){
+  showToast('✅ Registro guardado. ¡Sigue así!');
+  setTimeout(() => showTab('home'), 800);
+}
+
+function addHabit(){
+  const name = prompt('Nombre del nuevo hábito:');
+  if(!name) return;
+  showToast('✅ Hábito "' + name + '" añadido');
+}
+
+function showTab(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  const tabs = {home:0,coach:1,log:2,habits:3,plan:4};
+  document.querySelectorAll('.tab')[tabs[id]].classList.add('active');
+  if(id==='coach') checkApiKey();
+  if(id==='plan') document.getElementById('planDate').textContent = new Date().toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'});
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+let apiKey = localStorage.getItem('vitaia_key') || '';
+function checkApiKey(){
+  document.getElementById('apiBanner').style.display = apiKey ? 'none' : 'block';
+}
+function saveApiKey(){
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if(val.startsWith('sk-ant-') || val.startsWith('sk-')){
+    apiKey = val;
+    localStorage.setItem('vitaia_key', apiKey);
+    document.getElementById('apiBanner').style.display = 'none';
+    showToast('🔑 API key guardada');
+  } else {
+    showToast('❌ Clave inválida — debe empezar con sk-ant-');
+  }
+}
+
+let chatHistory = [];
+
+async function sendMsg(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  addMsg(text, 'user');
+  chatHistory.push({role:'user', content: text});
+  await callAI();
+}
+
+function quickSend(text){
+  document.getElementById('chatInput').value = text;
+  sendMsg();
+}
+
+function addMsg(text, role){
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.textContent = text;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+  return div;
+}
+
+async function callAI(){
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  const thinking = addMsg('Pensando...', 'ai thinking');
+
+  const system = `Eres VitaIA, un coach de bienestar experto, amigable y motivador. 
+Hablas en español, de forma clara y cercana. Das consejos prácticos y específicos sobre:
+- Nutrición y alimentación saludable
+- Ejercicio y movimiento
+- Calidad del sueño
+- Manejo del estrés y salud mental
+- Hidratación
+Tus respuestas son concisas (máximo 3–4 párrafos cortos), accionables y cálidas.
+Siempre terminas con un pequeño paso que el usuario puede hacer ahora mismo.`;
+
+  try {
+    const key = apiKey || 'demo';
+    if(!apiKey){
+      await new Promise(r => setTimeout(r, 900));
+      thinking.remove();
+      const demos = [
+        'Para mejorar tu energía, empieza el día con proteínas: huevos, yogur o legumbres. Evita azúcares refinados en el desayuno — te dan energía pero la cortan en 1–2 horas. ☀️\n\n**Haz esto ahora:** Bebe un vaso grande de agua (muchas veces la fatiga es deshidratación leve).',
+        'La clave para el sueño es la consistencia: acuéstate y levántate a la misma hora, incluso los fines de semana. Tu ritmo circadiano lo agradecerá. 🌙\n\n**Haz esto ahora:** Pon una alarma para recordarte apagar pantallas 30 min antes de dormir.',
+        'Para el estrés, prueba la técnica 5-4-3-2-1: nombra 5 cosas que ves, 4 que puedes tocar, 3 que escuchas, 2 que hueles, 1 que puedes saborear. Te ancla al presente en segundos. 🧘\n\n**Haz esto ahora:** Toma 3 respiraciones lentas, soltando cada exhale por completo.'
+      ];
+      addMsg(demos[Math.floor(Math.random()*demos.length)], 'ai');
+      btn.disabled = false;
+      return;
+    }
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens: 500,
+        system,
+        messages: chatHistory
+      })
+    });
+    const data = await resp.json();
+    thinking.remove();
+    const reply = data.content?.[0]?.text || 'Hubo un error. Intenta de nuevo.';
+    chatHistory.push({role:'assistant', content: reply});
+    addMsg(reply, 'ai');
+  } catch(e){
+    thinking.remove();
+    addMsg('Error de conexión. Verifica tu API key en el banner amarillo.', 'ai');
+  }
+  btn.disabled = false;
+}
+
+async function generatePlan(){
+  const btn = document.getElementById('genPlanBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generando tu plan...';
+
+  await new Promise(r => setTimeout(r, 1200));
+
+  const plans = [
+    {time:'06:30', title:'Agua + estiramiento', desc:'Un vaso de agua fría y 5 min de estiramiento cervical y lumbar.', badge:'🌅 Mañana'},
+    {time:'08:00', title:'Desayuno proteico', desc:'Avena con plátano y nueces, o 2 huevos con tomate. Nada de azúcares añadidos.', badge:'🥗 Nutrición'},
+    {time:'12:30', title:'Caminata post-almuerzo', desc:'15–20 min de caminata ligera. Mejora la glucemia y la digestión notablemente.', badge:'🏃 Movimiento'},
+    {time:'17:00', title:'Snack inteligente', desc:'Fruta con proteína: manzana + mantequilla de maní, o yogur natural.', badge:'⚡ Energía'},
+    {time:'21:30', title:'Desconexión digital', desc:'Apaga notificaciones. Lee algo físico o practica respiración 4-7-8 por 5 minutos.', badge:'😴 Descanso'},
+  ];
+
+  document.getElementById('planGrid').innerHTML = plans.map(p => `
+    <div class="plan-item">
+      <div class="plan-time">${p.time}</div>
+      <div class="plan-content">
+        <h4>${p.title}</h4>
+        <p>${p.desc}</p>
+        <span class="plan-badge">${p.badge}</span>
+      </div>
+    </div>
+  `).join('');
+
+  btn.textContent = '🔄 Regenerar plan';
+  btn.disabled = false;
+  showToast('📅 Plan del día generado');
+}
+
+document.getElementById('planDate').textContent = new Date().toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'});
+checkApiKey();
+</script>
+</body>
+</html>
